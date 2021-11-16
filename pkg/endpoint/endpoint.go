@@ -9,6 +9,7 @@ import (
 
 	"github.com/k3s-io/kine/pkg/drivers/dqlite"
 	"github.com/k3s-io/kine/pkg/drivers/generic"
+	mg "github.com/k3s-io/kine/pkg/drivers/mustgather"
 	"github.com/k3s-io/kine/pkg/drivers/mysql"
 	"github.com/k3s-io/kine/pkg/drivers/pgsql"
 	"github.com/k3s-io/kine/pkg/drivers/sqlite"
@@ -30,6 +31,7 @@ const (
 	ETCDBackend     = "etcd3"
 	MySQLBackend    = "mysql"
 	PostgresBackend = "postgres"
+	MustGather      = "mustgather"
 )
 
 type Config struct {
@@ -56,7 +58,7 @@ func Listen(ctx context.Context, config Config) (ETCDConfig, error) {
 			LeaderElect: true,
 		}, nil
 	}
-
+	fmt.Print(driver)
 	leaderelect, backend, err := getKineStorageBackend(ctx, driver, dsn, config)
 	if err != nil {
 		return ETCDConfig{}, errors.Wrap(err, "building kine")
@@ -223,6 +225,7 @@ func getKineStorageBackend(ctx context.Context, driver, dsn string, cfg Config) 
 		leaderElect = true
 		err         error
 	)
+
 	switch driver {
 	case SQLiteBackend:
 		leaderElect = false
@@ -233,6 +236,8 @@ func getKineStorageBackend(ctx context.Context, driver, dsn string, cfg Config) 
 		backend, err = pgsql.New(ctx, dsn, cfg.BackendTLSConfig, cfg.ConnectionPoolConfig)
 	case MySQLBackend:
 		backend, err = mysql.New(ctx, dsn, cfg.BackendTLSConfig, cfg.ConnectionPoolConfig)
+	case MustGather:
+		backend = mg.New()
 	default:
 		return false, nil, fmt.Errorf("storage backend is not defined")
 	}
@@ -245,6 +250,9 @@ func ParseStorageEndpoint(storageEndpoint string) (string, string) {
 	network, address := networkAndAddress(storageEndpoint)
 	switch network {
 	case "":
+		if address == "mustgather" {
+			return MustGather, ""
+		}
 		return SQLiteBackend, ""
 	case "http":
 		fallthrough
