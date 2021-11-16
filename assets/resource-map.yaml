@@ -1,0 +1,40 @@
+---
+- kind: customresourcedefinition
+  endpoint: /kubernetes.io/apiextensions.k8s.io/customresourcedefinitions(?:/(?P<name>.+))?
+  yamllocation: cluster-scoped-resources/apiextensions.k8s.io/customresourcedefinitions/{{if .Name}}{{.Name}}.yaml{{end}}
+- kind: pod
+  endpoint: /kubernetes.io/pods(?:/(?P<namespace>[^/]+)(?:/(?P<name>.+))?)?
+  yamllocation: namespaces/{{.Namespace}}/core/pods.yaml
+- kind: secret
+  endpoint: /kubernetes.io/secrets(?:/(?P<namespace>[^/]+)(?:/(?P<name>.+))?)?
+  yamllocation: namespaces/{{.Namespace}}/core/secrets.yaml
+- kind: service
+  endpoint: /kubernetes.io/services/specs(?:/(?P<namespace>[^/]+)(?:/(?P<name>.+))?)?
+  yamllocation: namespaces/{{.Namespace}}/core/services.yaml
+- kind: endpoint
+  endpoint: /kubernetes.io/services/endpoints(?:/(?P<namespace>[^/]+)(?:/(?P<name>.+))?)?
+  yamllocation: namespaces/{{.Namespace}}/core/endpoints.yaml
+- kind: endpointslice
+  endpoint: /kubernetes.io/endpointslices(?:/(?P<namespace>[^/]+)(?:/(?P<name>.+))?)?
+  yamllocation: namespaces/{{.Namespace}}/discovery.k8s.io/endpointslices.yaml
+- kind: event
+  endpoint: /kubernetes.io/events(?:/(?P<namespace>[^/]+)(?:/(?P<name>.+))?)?
+  yamllocation: namespaces/{{.Namespace}}/core/events.yaml
+- kind: node
+  endpoint: /kubernetes.io/nodes(?:/(?P<name>.+))?
+  yamllocation: cluster-scoped-resources/core/nodes/{{if .Name}}{{.Name}}.yaml{{end}}
+- kind: persistentvolume
+  endpoint: /kubernetes.io/persistentvolumes(?:/(?P<namespace>[^/]+)(?:/(?P<name>.+))?)?
+  yamllocation: cluster-scoped-resources/core/persistentvolumes
+- kind: persistentvolumeclaim
+  endpoint: /kubernetes.io/persistentvolumeclaims(?:/(?P<namespace>[^/]+)(?:/(?P<name>.+))?)?
+  yamllocation: namespaces/{{.Namespace}}/core/persistentvolumeclaims.yaml
+- kind: replicationcontroller
+  endpoint: /kubernetes.io/replicationcontrollers(?:/(?P<namespace>[^/]+)(?:/(?P<name>.+))?)?
+  yamllocation: namespaces/{{.Namespace}}/core/replicationcontrollers.yaml
+- kind: configmap
+  endpoint: /kubernetes.io/configmaps(?:/(?P<namespace>[^/]+)(?:/(?P<name>.+))?)?
+  yamllocation: namespaces/{{.Namespace}}/core/configmaps.yaml
+- kind: namespace
+  endpoint: /kubernetes.io/namespaces(?:/(?P<name>.+))?
+  yamllocation: namespaces/{{if .Name}}{{.Name}}{{else}}{{.Namespace}}{{end}}/{{if .Name}}{{.Name}}{{else}}{{.Namespace}}{{end}}.yaml

@@ -19,4 +19,5 @@ require (
 	go.etcd.io/etcd/client/v3 v3.5.0
 	go.etcd.io/etcd/server/v3 v3.5.0
 	google.golang.org/grpc v1.38.0
+	sigs.k8s.io/yaml v1.2.0
 )
